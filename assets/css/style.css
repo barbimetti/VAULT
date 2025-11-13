@@ -1,0 +1,190 @@
+/* ---- VARIABLES DE COLOR ---- */
+:root {
+    --vino: #581318;
+    --blanco-suave: #f2f2f2;
+    --beige-claro: #c2b280;
+    --gris-oscuro: #2b2b2b;
+    --gris-claro: #e0e0e0;
+}
+
+/* ---- RESET ---- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: var(--blanco-suave);
+    color: var(--gris-oscuro);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ---- HEADER ---- */
+header {
+    background-color: var(--vino);
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+}
+
+header .subtitulo {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* ---- MAIN ---- */
+main {
+    flex: 1;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+section h2 {
+    color: var(--vino);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--beige-claro);
+    padding-bottom: 0.5rem;
+}
+
+/* ---- FORMULARIO ---- */
+form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    color: var(--vino);
+    margin-bottom: 0.4rem;
+}
+
+input {
+    padding: 0.6rem;
+    border: 1px solid var(--gris-claro);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+    border-color: var(--vino);
+    outline: none;
+    box-shadow: 0 0 4px rgba(88, 19, 24, 0.3);
+}
+
+.btn-agregar {
+    grid-column: 1 / -1;
+    padding: 0.8rem;
+    background-color: var(--vino);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.btn-agregar:hover {
+    background-color: #731b22;
+    transform: scale(1.02);
+}
+
+/* ---- TABLA ---- */
+
+.tabla-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th,
+td {
+    padding: 0.8rem;
+    text-align: center;
+    border-bottom: 1px solid var(--gris-claro);
+}
+
+th {
+    background-color: var(--beige-claro);
+    color: var(--gris-oscuro);
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+tr:hover {
+    background-color: #f9f3ec;
+}
+
+.btn-actualizar,
+.btn-eliminar {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.3rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-actualizar:hover {
+    color: #1a73e8;
+    transform: scale(1.1);
+}
+
+.btn-eliminar:hover {
+    color: #c0392b;
+    transform: scale(1.1);
+}
+
+/* ---- RESUMEN ---- */
+.resumen {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    padding-top: 0.5rem;
+    color: var(--gris-oscuro);
+}
+
+/* ---- FOOTER ---- */
+footer {
+    background-color: var(--vino);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+    font-size: 0.9rem;
+}

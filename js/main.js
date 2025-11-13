@@ -1,119 +1,178 @@
+// ---- VARIABLES Y CONSTANTES ----
+let productos = JSON.parse(localStorage.getItem("productos")) || [];
+let siguienteId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
 
-let productos = [];
-let siguienteId = 1;
+const form = document.getElementById("formProducto");
+const tablaBody = document.querySelector("#tablaProductos tbody");
+const totalProductos = document.getElementById("totalProductos");
+const valorTotal = document.getElementById("valorTotal");
 
-function iniciarSimulador() {
-    alert("Bienvenido a tu control de stock!");
-    console.log("Simulador iniciado correctamente");
+// ---- FUNCIONES PRINCIPALES ----
+function cargarTabla() {
+    tablaBody.innerHTML = "";
 
-    let continuar = true;
+    productos.forEach((prod) => {
+        const fila = document.createElement("tr");
 
-    while (continuar) {
-        let opcion = prompt(
-            "¿Qué deseas hacer?\n1. Agregar producto\n2. Ver stock\n3. Actualizar cantidad\n4. Eliminar producto\n5. Salir"
-        );
+        // ID
+        const tdId = document.createElement("td");
+        tdId.textContent = prod.id;
+        fila.appendChild(tdId);
 
-        switch (opcion) {
-            case "1":
-                agregarProducto();
-                break;
-            case "2":
-                console.log("Stock actual:", productos);
-                alert("Revisar la consola para ver el stock completo.");
-                break;
-            case "3":
-                actualizarCantidad();
-                break;
-            case "4":
-                eliminarProducto();
-                break;
-            case "5":
-                continuar = false;
-                alert("Saliendo del simulador...");
-                break;
-            default:
-                alert("Opción incorrecta. Intenta nuevamente.");
-                break;
-        }
-    }
+        // Nombre
+        const tdNombre = document.createElement("td");
+        tdNombre.textContent = prod.nombre;
+        fila.appendChild(tdNombre);
+
+        // Categoría
+        const tdCategoria = document.createElement("td");
+        tdCategoria.textContent = prod.categoria || "-";
+        fila.appendChild(tdCategoria);
+
+        // Cantidad
+        const tdCantidad = document.createElement("td");
+        tdCantidad.textContent = prod.cantidad;
+        fila.appendChild(tdCantidad);
+
+        // Precio
+        const tdPrecio = document.createElement("td");
+        tdPrecio.textContent = prod.precio.toFixed(2);
+        fila.appendChild(tdPrecio);
+
+        // Total
+        const tdTotal = document.createElement("td");
+        tdTotal.textContent = (prod.cantidad * prod.precio).toFixed(2);
+        fila.appendChild(tdTotal);
+
+        // Acciones
+        const tdAcciones = document.createElement("td");
+
+        const btnEditar = document.createElement("button");
+        btnEditar.textContent = "Editar";
+        btnEditar.className = "btn-actualizar";
+        btnEditar.dataset.id = prod.id;
+
+        const btnEliminar = document.createElement("button");
+        btnEliminar.textContent = "Eliminar";
+        btnEliminar.className = "btn-eliminar";
+        btnEliminar.dataset.id = prod.id;
+
+        tdAcciones.appendChild(btnEditar);
+        tdAcciones.appendChild(btnEliminar);
+        fila.appendChild(tdAcciones);
+
+        tablaBody.appendChild(fila);
+    });
+
+    actualizarTotales();
+    guardarProductos();
 }
 
+// ---- AGREGAR PRODUCTO ----
+function agregarProducto(e) {
+    e.preventDefault();
 
-function agregarProducto() {
-    let nombre = prompt("Ingresa el nombre del producto:");
-    let cantidad = parseInt(prompt("Ingresa la cantidad inicial:"));
+    const nombre = document.getElementById("nombre").value.trim();
+    const categoria = document.getElementById("categoria").value.trim();
+    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const precio = parseFloat(document.getElementById("precio").value);
 
-    let producto = {
-        id: siguienteId,
-        nombre: nombre,
-        cantidad: cantidad
+    if (!nombre || isNaN(cantidad) || cantidad < 0 || isNaN(precio) || precio < 0) {
+        alert("Completa todos los campos correctamente (cantidad y precio >= 0)");
+        return;
+    }
+
+    const nuevoProducto = { id: siguienteId++, nombre, categoria, cantidad, precio };
+    productos.push(nuevoProducto);
+
+    cargarTabla();
+    form.reset();
+}
+
+// ---- ELIMINAR PRODUCTO ----
+function eliminarProducto(id) {
+    productos = productos.filter(p => p.id !== id);
+    cargarTabla();
+}
+
+// ---- EDITAR CANTIDAD + PRECIO INLINE ----
+function editarProducto(id) {
+    const fila = [...tablaBody.children].find(tr =>
+        tr.querySelector(".btn-actualizar")?.dataset.id == id
+    );
+
+    const producto = productos.find(p => p.id === id);
+
+    const tdCantidad = fila.children[3];
+    const tdPrecio = fila.children[4];
+
+    // Crear inputs
+    const inputCant = document.createElement("input");
+    inputCant.type = "number";
+    inputCant.min = "0";
+    inputCant.value = producto.cantidad;
+
+    const inputPrecio = document.createElement("input");
+    inputPrecio.type = "number";
+    inputPrecio.min = "0";
+    inputPrecio.step = "0.01";
+    inputPrecio.value = producto.precio.toFixed(2);
+
+    // Reemplazamos el contenido
+    tdCantidad.textContent = "";
+    tdCantidad.appendChild(inputCant);
+
+    tdPrecio.textContent = "";
+    tdPrecio.appendChild(inputPrecio);
+
+    // Cuando sale del input, actualizar
+    const actualizar = () => {
+        let nuevaCant = parseInt(inputCant.value);
+        if (isNaN(nuevaCant) || nuevaCant < 0) nuevaCant = 0;
+
+        let nuevoPrecio = parseFloat(inputPrecio.value);
+        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) nuevoPrecio = 0;
+
+        producto.cantidad = nuevaCant;
+        producto.precio = nuevoPrecio;
+
+        cargarTabla();
     };
 
-    productos.push(producto);
-    siguienteId++;
+    inputCant.addEventListener("blur", actualizar);
+    inputPrecio.addEventListener("blur", actualizar);
 
-    console.log("Producto agregado:", producto);
-    alert("Producto agregado correctamente!");
+    inputCant.focus();
 }
 
-function actualizarCantidad() {
-    if (productos.length === 0) {
-        alert("No hay productos en el stock todavía.");
-        return;
-    }
+// ---- ACTUALIZAR TOTALES ----
+function actualizarTotales() {
+    const total = productos.reduce((acc, p) => acc + p.cantidad, 0);
+    const valor = productos.reduce((acc, p) => acc + (p.cantidad * p.precio), 0);
 
-    let nombreBuscado = prompt("Ingresa el nombre del producto a actualizar:");
-    let producto = productos.find(p => p.nombre.toLowerCase() === nombreBuscado.toLowerCase());
-
-    if (!producto) {
-        alert("No se encontró un producto con ese nombre.");
-        return;
-    }
-
-    let nuevaCantidad = parseInt(prompt(`Cantidad actual: ${producto.cantidad}. Ingresa la nueva cantidad:`));
-
-    if (nuevaCantidad == "" || nuevaCantidad < 0) {
-        alert("Cantidad no válida. Intenta nuevamente.");
-        return;
-    }
-
-    producto.cantidad = nuevaCantidad;
-
-    console.log("Producto actualizado:", producto);
-    alert("Cantidad actualizada correctamente!");
+    totalProductos.textContent = total;
+    valorTotal.textContent = valor.toFixed(2);
 }
 
-function eliminarProducto() {
-    if (productos.length === 0) {
-        alert("No hay productos en el stock todavía.");
-        return;
-    }
-
-    let nombreBuscado = prompt("Ingresa el nombre del producto que deseas eliminar:");
-
-    let confirmar = confirm(`¿Seguro que deseas eliminar "${nombreBuscado}" del stock?`);
-    if (!confirmar) {
-        alert("Operación cancelada.");
-        return;
-    }
-
-    let encontrado = false;
-    let nuevosProductos = [];
-    for (let i = 0; i < productos.length; i++) {
-        if (productos[i].nombre.toLowerCase() === nombreBuscado.toLowerCase()) {
-            console.log("Producto eliminado:", productos[i]);
-            alert(`El producto "${productos[i].nombre}" fue eliminado del stock.`);
-            encontrado = true;
-        } else {
-            nuevosProductos.push(productos[i]);
-        }
-    }
-
-    if (!encontrado) {
-        alert("No se encontró un producto con ese nombre.");
-    }
-
-    productos = nuevosProductos;
+// ---- GUARDAR EN LOCALSTORAGE ----
+function guardarProductos() {
+    localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-iniciarSimulador();
+// ---- EVENTOS ----
+form.addEventListener("submit", agregarProducto);
+
+tablaBody.addEventListener("click", (e) => {
+    const id = parseInt(e.target.dataset.id);
+
+    if (e.target.classList.contains("btn-eliminar")) {
+        eliminarProducto(id);
+    }
+
+    if (e.target.classList.contains("btn-actualizar")) {
+        editarProducto(id);
+    }
+});
+
+// ---- CARGA INICIAL ----
+cargarTabla();
