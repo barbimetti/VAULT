@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- JS -->
+    <!-- JS propios -->
+    <script defer src="./js/data.js"></script>
     <script defer src="./js/main.js"></script>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <title>VAULT - Control de Stock</title>
 </head>
@@ -21,7 +23,6 @@
     </header>
 
     <main>
-        <!-- Formulario -->
         <section class="form-section">
             <h2>Agregar nuevo producto</h2>
             <form id="formProducto">
@@ -32,7 +33,13 @@
 
                 <div class="form-group">
                     <label for="categoria">Categoría</label>
-                    <input type="text" id="categoria" placeholder="Ej: Bebidas">
+                    <select id="categoria" required>
+                        <option value="" disabled selected>Selecciona una categoría</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Accesorios">Accesorios</option>
+                        <option value="Vajilla">Vajilla</option>
+                        <option value="Insumos">Insumos</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -49,7 +56,6 @@
             </form>
         </section>
 
-        <!-- Tabla -->
         <section class="tabla-section">
             <h2>Inventario actual</h2>
             <div class="tabla-wrapper">
@@ -66,13 +72,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Aca van los productos -->
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Resumen -->
         <section class="resumen-section">
             <h2>Resumen</h2>
             <div class="resumen">
@@ -85,6 +89,10 @@
     <footer>
         <p>© 2025 Control de Stock - Proyecto</p>
     </footer>
+
+    <!-- Librerías externas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 
 </html>
